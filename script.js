@@ -1,6 +1,8 @@
+// ===== Cipher Functions =====
 function caesar(text, shift, encrypt = true) {
   shift = parseInt(shift);
   if (isNaN(shift)) return "❌ Invalid shift value.";
+
   return text.replace(/[a-z]/gi, (c) => {
     const base = c >= "A" && c <= "Z" ? 65 : 97;
     const offset = encrypt ? shift : -shift;
@@ -19,6 +21,7 @@ function vigenere(text, key, encrypt = true) {
   let result = "",
     j = 0;
   key = key.toUpperCase();
+
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
     if (/[a-z]/i.test(c)) {
@@ -36,6 +39,7 @@ function vigenere(text, key, encrypt = true) {
   return result;
 }
 
+// ===== Cipher Execution =====
 function runCipher() {
   const msg = document.getElementById("message").value.trim();
   const mode = document.getElementById("mode").value;
@@ -72,6 +76,7 @@ function runCipher() {
   }, 300);
 }
 
+// ===== Download & Copy Tools =====
 function downloadResult(filename = "securecipher_result.txt") {
   const output = document.getElementById("output").textContent;
   if (
@@ -80,6 +85,7 @@ function downloadResult(filename = "securecipher_result.txt") {
     output.includes("Enter a message")
   )
     return;
+
   const blob = new Blob([output], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -99,6 +105,7 @@ function copyToClipboard() {
   );
 }
 
+// ===== Voice Input Handling =====
 function startDictation() {
   if (!("webkitSpeechRecognition" in window)) {
     alert(
@@ -126,7 +133,7 @@ function startDictation() {
   recognition.onerror = (event) => {
     if (event.error === "no-speech") {
       if (confirm("⚠️ No speech detected. Retry voice input?")) {
-        recognition.start(); // Retry listening
+        recognition.start();
       } else {
         document.getElementById("output").textContent =
           "🛑 Voice input canceled.";
@@ -142,6 +149,7 @@ function startDictation() {
   recognition.start();
 }
 
+// ===== PWA Service Worker =====
 function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
@@ -150,6 +158,7 @@ function registerServiceWorker() {
   }
 }
 
+// ===== Keyboard Navigation =====
 function bindEnterNavigation() {
   const fields = ["message", "key", "action", "mode"];
   fields.forEach((id, idx) => {
@@ -176,6 +185,7 @@ function bindEnterNavigation() {
     });
 }
 
+// ===== Initialization =====
 window.onload = function () {
   const splash = document.getElementById("splash");
   if (splash) {
@@ -184,6 +194,7 @@ window.onload = function () {
       document.getElementById("message").focus();
     }, 2000);
   }
+
   bindEnterNavigation();
   registerServiceWorker();
 };
