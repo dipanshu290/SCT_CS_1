@@ -25,8 +25,9 @@ function vigenere(text, key, encrypt = true) {
       const base = c >= "A" && c <= "Z" ? 65 : 97;
       const k = key[j % key.length].charCodeAt(0) - 65;
       const offset = encrypt ? k : -k;
-      const code = ((c.charCodeAt(0) - base + offset + 26) % 26) + base;
-      result += String.fromCharCode(code);
+      result += String.fromCharCode(
+        ((c.charCodeAt(0) - base + offset + 26) % 26) + base
+      );
       j++;
     } else {
       result += c;
@@ -36,13 +37,13 @@ function vigenere(text, key, encrypt = true) {
 }
 
 function runCipher() {
-  const msg = document.getElementById("message").value;
+  const msg = document.getElementById("message").value.trim();
   const mode = document.getElementById("mode").value;
   const key = document.getElementById("key").value;
   const action = document.getElementById("action").value;
 
   let output = "🧪 Output:\n\n";
-  if (!msg.trim()) {
+  if (!msg) {
     output += "❌ Enter a message first.";
   } else {
     switch (mode) {
@@ -100,9 +101,12 @@ function copyToClipboard() {
 
 function startDictation() {
   if (!("webkitSpeechRecognition" in window)) {
-    alert("🚫 Speech recognition not supported in this browser.");
+    alert(
+      "🚫 Voice input is not supported in this browser. Try Chrome or Edge."
+    );
     return;
   }
+
   const recognition = new webkitSpeechRecognition();
   recognition.continuous = false;
   recognition.interimResults = false;
@@ -111,14 +115,25 @@ function startDictation() {
   recognition.onstart = () => {
     document.getElementById("output").textContent = "🎙️ Listening...";
   };
+
   recognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript;
     document.getElementById("message").value = transcript;
     document.getElementById("output").textContent =
       "✅ Transcribed message inserted.";
   };
-  recognition.onerror = () => alert("⚠️ Voice input failed. Try again.");
-  recognition.onend = () => {};
+
+  recognition.onerror = (event) => {
+    const messages = {
+      "no-speech": "⚠️ No speech detected. Try again.",
+      "audio-capture": "🎧 No microphone detected.",
+      "not-allowed": "🚫 Microphone access denied.",
+      network: "🌐 Network error—please check your connection.",
+    };
+    document.getElementById("output").textContent =
+      messages[event.error] || `⚠️ Voice input failed: ${event.error}`;
+  };
+
   recognition.start();
 }
 
@@ -164,7 +179,6 @@ window.onload = function () {
       document.getElementById("message").focus();
     }, 2000);
   }
-
   bindEnterNavigation();
   registerServiceWorker();
 };
