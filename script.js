@@ -1,6 +1,6 @@
 function caesar(text, shift, encrypt = true) {
+  if (!/^-?\d+$/.test(shift)) return "❌ Caesar shift must be a valid integer.";
   shift = parseInt(shift);
-  if (isNaN(shift)) return "❌ Invalid shift value.";
   return text.replace(/[a-z]/gi, (c) => {
     const base = c >= "A" && c <= "Z" ? 65 : 97;
     const offset = encrypt ? shift : -shift;
@@ -15,7 +15,8 @@ function rot13(text) {
 }
 
 function vigenere(text, key, encrypt = true) {
-  if (!/^[a-z]+$/i.test(key)) return "❌ Vigenère key must be letters only.";
+  if (!/^[a-z]+$/i.test(key))
+    return "❌ Vigenère key must contain letters only.";
   let result = "",
     j = 0;
   key = key.toUpperCase();
@@ -39,9 +40,10 @@ function vigenere(text, key, encrypt = true) {
 function runCipher() {
   const msg = document.getElementById("message").value.trim();
   const mode = document.getElementById("mode").value;
-  const key = document.getElementById("key").value;
+  const key = document.getElementById("key").value.trim();
   const action = document.getElementById("action").value;
   let output = "🧪 Output:\n\n";
+
   if (!msg) {
     output += "❌ Enter a message first.";
   } else {
@@ -59,10 +61,13 @@ function runCipher() {
         output += "❌ Unknown mode.";
     }
   }
+
   const outputEl = document.getElementById("output");
   outputEl.textContent = output;
   outputEl.scrollIntoView({ behavior: "smooth" });
+
   setTimeout(() => {
+    if (output.includes("❌")) return;
     if (confirm("✅ Cipher complete! Download result as .txt?")) {
       downloadResult();
     }
@@ -127,9 +132,9 @@ function bindEnterNavigation() {
         let nextIdx = idx + 1;
         if (id === "mode" && isRot13) nextIdx++;
         if (id === "key" && isRot13) nextIdx++;
-        const next = fields[nextIdx];
-        if (next) {
-          document.getElementById(next).focus();
+        const nextField = fields[nextIdx];
+        if (nextField) {
+          document.getElementById(nextField).focus();
         } else {
           runButton.focus();
         }
