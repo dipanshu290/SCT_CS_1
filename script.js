@@ -115,12 +115,22 @@ function startDictation() {
   }
 
   const recognition = new webkitSpeechRecognition();
-  recognition.continuous = false;
+  recognition.continuous = true; // gives more time to speak
   recognition.interimResults = false;
   recognition.lang = "en-US";
 
   recognition.onstart = () => {
     document.getElementById("output").textContent = "🎙️ Listening...";
+  };
+
+  recognition.onaudiostart = () => {
+    console.log("🎧 Audio stream started");
+    document.getElementById("output").textContent = "🎧 Mic activated...";
+  };
+
+  recognition.onspeechstart = () => {
+    console.log("🗣️ Speech detected");
+    document.getElementById("output").textContent = "🗣️ Speech detected...";
   };
 
   recognition.onresult = (event) => {
@@ -133,7 +143,7 @@ function startDictation() {
   recognition.onerror = (event) => {
     if (event.error === "no-speech") {
       if (confirm("⚠️ No speech detected. Retry voice input?")) {
-        recognition.start();
+        setTimeout(() => recognition.start(), 150);
       } else {
         document.getElementById("output").textContent =
           "🛑 Voice input canceled.";
@@ -146,7 +156,7 @@ function startDictation() {
     }
   };
 
-  recognition.start();
+  setTimeout(() => recognition.start(), 300);
 }
 
 // ===== PWA Service Worker =====
