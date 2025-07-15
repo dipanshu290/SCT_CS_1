@@ -124,14 +124,19 @@ function startDictation() {
   };
 
   recognition.onerror = (event) => {
-    const messages = {
-      "no-speech": "⚠️ No speech detected. Try again.",
-      "audio-capture": "🎧 No microphone detected.",
-      "not-allowed": "🚫 Microphone access denied.",
-      network: "🌐 Network error—please check your connection.",
-    };
-    document.getElementById("output").textContent =
-      messages[event.error] || `⚠️ Voice input failed: ${event.error}`;
+    if (event.error === "no-speech") {
+      if (confirm("⚠️ No speech detected. Retry voice input?")) {
+        recognition.start(); // Retry listening
+      } else {
+        document.getElementById("output").textContent =
+          "🛑 Voice input canceled.";
+      }
+    } else {
+      alert(`⚠️ Voice input failed: ${event.error}`);
+      document.getElementById(
+        "output"
+      ).textContent = `⚠️ Error: ${event.error}`;
+    }
   };
 
   recognition.start();
