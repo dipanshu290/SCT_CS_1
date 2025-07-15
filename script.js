@@ -1,7 +1,6 @@
 function caesar(text, shift, encrypt = true) {
   shift = parseInt(shift);
   if (isNaN(shift)) return "❌ Invalid shift value.";
-
   return text.replace(/[a-z]/gi, (c) => {
     const base = c >= "A" && c <= "Z" ? 65 : 97;
     const offset = encrypt ? shift : -shift;
@@ -20,7 +19,6 @@ function vigenere(text, key, encrypt = true) {
   let result = "",
     j = 0;
   key = key.toUpperCase();
-
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
     if (/[a-z]/i.test(c)) {
@@ -35,7 +33,6 @@ function vigenere(text, key, encrypt = true) {
       result += c;
     }
   }
-
   return result;
 }
 
@@ -44,7 +41,6 @@ function runCipher() {
   const mode = document.getElementById("mode").value;
   const key = document.getElementById("key").value;
   const action = document.getElementById("action").value;
-
   let output = "🧪 Output:\n\n";
   if (!msg) {
     output += "❌ Enter a message first.";
@@ -63,11 +59,9 @@ function runCipher() {
         output += "❌ Unknown mode.";
     }
   }
-
   const outputEl = document.getElementById("output");
   outputEl.textContent = output;
   outputEl.scrollIntoView({ behavior: "smooth" });
-
   setTimeout(() => {
     if (confirm("✅ Cipher complete! Download result as .txt?")) {
       downloadResult();
@@ -83,7 +77,6 @@ function downloadResult(filename = "securecipher_result.txt") {
     output.includes("Enter a message")
   )
     return;
-
   const blob = new Blob([output], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -110,29 +103,46 @@ function registerServiceWorker() {
 }
 
 function bindEnterNavigation() {
-  const fields = ["message", "key", "action", "mode"];
+  const fields = ["message", "mode", "key", "action"];
+  const modeEl = document.getElementById("mode");
+  const keyEl = document.getElementById("key");
+  const runButton = document.querySelector('button[onclick="runCipher()"]');
+
+  modeEl.addEventListener("change", () => {
+    if (modeEl.value === "rot13") {
+      keyEl.disabled = true;
+      keyEl.value = "";
+      keyEl.style.opacity = "0.5";
+    } else {
+      keyEl.disabled = false;
+      keyEl.style.opacity = "1";
+    }
+  });
+
   fields.forEach((id, idx) => {
     document.getElementById(id).addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        const next = fields[idx + 1];
+        const isRot13 = modeEl.value === "rot13";
+        let nextIdx = idx + 1;
+        if (id === "mode" && isRot13) nextIdx++;
+        if (id === "key" && isRot13) nextIdx++;
+        const next = fields[nextIdx];
         if (next) {
           document.getElementById(next).focus();
         } else {
-          document.querySelector('button[onclick="runCipher()"]').focus();
+          runButton.focus();
         }
       }
     });
   });
 
-  document
-    .querySelector('button[onclick="runCipher()"]')
-    .addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        runCipher();
-      }
-    });
+  runButton.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      runCipher();
+    }
+  });
 }
 
 window.onload = () => {
@@ -143,7 +153,6 @@ window.onload = () => {
       document.getElementById("message").focus();
     }, 2000);
   }
-
   bindEnterNavigation();
   registerServiceWorker();
 };
