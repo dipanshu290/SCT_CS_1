@@ -3,10 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <title>SecureCipher™ Pro</title>
+    <meta
+      name="description"
+      content="Encrypt and decrypt messages using Caesar, ROT13, or Vigenère ciphers with SecureCipher™ Pro."
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f4c81" />
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#0f4c81" />
   </head>
   <body>
     <div id="splash">🛡️ SecureCipher™ Pro Initializing...</div>
@@ -19,14 +23,11 @@
         id="message"
         rows="4"
         placeholder="Type your message..."
+        aria-label="Message input"
       ></textarea>
 
-      <button type="button" onclick="startDictation()">
-        🎤 Start Dictation
-      </button>
-
       <label for="mode">🧭 Cipher Mode:</label>
-      <select id="mode">
+      <select id="mode" aria-label="Cipher Mode Selection">
         <option value="caesar">Caesar</option>
         <option value="rot13">ROT13</option>
         <option value="vigenere">Vigenère</option>
@@ -37,17 +38,26 @@
         id="key"
         type="text"
         placeholder="e.g. 5 (Caesar) or keyword (Vigenère)"
+        aria-label="Key or Shift input"
       />
 
       <label for="action">🔁 Action:</label>
-      <select id="action">
+      <select id="action" aria-label="Select encrypt or decrypt">
         <option value="encrypt">Encrypt</option>
         <option value="decrypt">Decrypt</option>
       </select>
 
       <div class="actions">
-        <button type="button" onclick="runCipher()">Run Cipher</button>
-        <button type="button" onclick="copyToClipboard()">Copy Result</button>
+        <button type="button" onclick="runCipher()" aria-label="Run Cipher">
+          Run Cipher
+        </button>
+        <button
+          type="button"
+          onclick="copyToClipboard()"
+          aria-label="Copy Result"
+        >
+          Copy Result
+        </button>
       </div>
 
       <div id="output">🧬 Awaiting command...</div>
@@ -59,10 +69,5 @@
     </footer>
 
     <script src="script.js"></script>
-    <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("service-worker.js");
-      }
-    </script>
   </body>
 </html>

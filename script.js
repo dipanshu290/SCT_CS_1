@@ -1,4 +1,3 @@
-// ===== Cipher Functions =====
 function caesar(text, shift, encrypt = true) {
   shift = parseInt(shift);
   if (isNaN(shift)) return "❌ Invalid shift value.";
@@ -13,7 +12,7 @@ function caesar(text, shift, encrypt = true) {
 }
 
 function rot13(text) {
-  return caesar(text, 13, true);
+  return caesar(text, 13);
 }
 
 function vigenere(text, key, encrypt = true) {
@@ -36,10 +35,10 @@ function vigenere(text, key, encrypt = true) {
       result += c;
     }
   }
+
   return result;
 }
 
-// ===== Cipher Execution =====
 function runCipher() {
   const msg = document.getElementById("message").value.trim();
   const mode = document.getElementById("mode").value;
@@ -76,7 +75,6 @@ function runCipher() {
   }, 300);
 }
 
-// ===== Download & Copy Tools =====
 function downloadResult(filename = "securecipher_result.txt") {
   const output = document.getElementById("output").textContent;
   if (
@@ -105,70 +103,12 @@ function copyToClipboard() {
   );
 }
 
-// ===== Voice Input Handling =====
-function startDictation() {
-  if (!("webkitSpeechRecognition" in window)) {
-    alert(
-      "🚫 Voice input is not supported in this browser. Try Chrome or Edge."
-    );
-    return;
-  }
-
-  const recognition = new webkitSpeechRecognition();
-  recognition.continuous = true; // gives more time to speak
-  recognition.interimResults = false;
-  recognition.lang = "en-US";
-
-  recognition.onstart = () => {
-    document.getElementById("output").textContent = "🎙️ Listening...";
-  };
-
-  recognition.onaudiostart = () => {
-    console.log("🎧 Audio stream started");
-    document.getElementById("output").textContent = "🎧 Mic activated...";
-  };
-
-  recognition.onspeechstart = () => {
-    console.log("🗣️ Speech detected");
-    document.getElementById("output").textContent = "🗣️ Speech detected...";
-  };
-
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    document.getElementById("message").value = transcript;
-    document.getElementById("output").textContent =
-      "✅ Transcribed message inserted.";
-  };
-
-  recognition.onerror = (event) => {
-    if (event.error === "no-speech") {
-      if (confirm("⚠️ No speech detected. Retry voice input?")) {
-        setTimeout(() => recognition.start(), 150);
-      } else {
-        document.getElementById("output").textContent =
-          "🛑 Voice input canceled.";
-      }
-    } else {
-      alert(`⚠️ Voice input failed: ${event.error}`);
-      document.getElementById(
-        "output"
-      ).textContent = `⚠️ Error: ${event.error}`;
-    }
-  };
-
-  setTimeout(() => recognition.start(), 300);
-}
-
-// ===== PWA Service Worker =====
 function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js");
-    });
+    navigator.serviceWorker.register("service-worker.js");
   }
 }
 
-// ===== Keyboard Navigation =====
 function bindEnterNavigation() {
   const fields = ["message", "key", "action", "mode"];
   fields.forEach((id, idx) => {
@@ -195,8 +135,7 @@ function bindEnterNavigation() {
     });
 }
 
-// ===== Initialization =====
-window.onload = function () {
+window.onload = () => {
   const splash = document.getElementById("splash");
   if (splash) {
     setTimeout(() => {
