@@ -16,5 +16,3 @@ Vigenère Cipher (alphabetic key-based)
 
 🎨 Responsive UI with animated effects and keyboard navigation
 
-🙌 Author
-Made with 💙 by Dipanshu © 2025 SecureCipher Labs
